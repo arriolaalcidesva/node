@@ -1,0 +1,21 @@
+FROM node:alpine
+
+WORKDIR /usr/src/app
+
+RUN npm i -g @nestjs/cli
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+CMD ["nest", "start"]
+
+#RUN rm -rf ./node_modules
+
+#COPY . .
+
+#RUN npm install
+
+EXPOSE 3000
