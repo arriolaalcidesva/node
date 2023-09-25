@@ -7,6 +7,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { AuthModule } from './auth/auth.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ProvidersModule } from './providers/providers.module';
+import { ExcelModule } from './excel/excel.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ProvidersModule } from './providers/providers.module';
     ProjectsModule,
     AuthModule,
     TasksModule,
-    ProvidersModule,],
+    ProvidersModule,
+    ExcelModule,],
   controllers: [],
   providers: [],
 })
