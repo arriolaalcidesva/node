@@ -1,5 +1,8 @@
 import {
   Body,
+  CacheInterceptor,
+  CacheKey,
+  CacheTTL,
   Controller,
   Delete,
   Get,
@@ -8,6 +11,7 @@ import {
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserDTO, UserToProjectDTO, UserUpdateDTO } from '../dto/user.dto';
 import { UsersService } from '../services/users.service';
@@ -32,6 +36,9 @@ export class UsersController {
   }
 
   @AdminAccess()
+  /* @UseInterceptors(CacheInterceptor)
+  @CacheTTL(10)
+  @CacheKey("all-users") */
   @Get('all')
   public async findAllUsers() {
     return await this.usersService.findUsers();

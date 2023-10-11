@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Cache } from "cache-manager";
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { ErrorManager } from 'src/utils/error.manager';
@@ -14,6 +15,8 @@ export class UsersService {
     private readonly userRepository: Repository<UsersEntity>,
     @InjectRepository(UsersProjectsEntity)
     private readonly userProjectRepository: Repository<UsersProjectsEntity>,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache
   ) {}
 
   public async createUser(body: UserDTO): Promise<UsersEntity> {
@@ -27,6 +30,15 @@ export class UsersService {
 
   public async findUsers(): Promise<UsersEntity[]> {
     try {
+      const cachedUsers = await this.cacheManager.get<UsersEntity[]>(
+        "all-users"
+      );
+      if (cachedUsers) {
+        const angel = cachedUsers.filter(user => user.username === 'angel')
+        console.log('cachedUsers: ', angel);
+        return cachedUsers;
+      }
+
       const users: UsersEntity[] = await this.userRepository.find();
       if (users.length === 0) {
         throw new ErrorManager({
@@ -34,8 +46,10 @@ export class UsersService {
           message: 'No se encontro resultado',
         });
       }
+      await this.cacheManager.set("all-users", users, 10);
       return users;
     } catch (error) {
+      console.error('ERROR: ', error);
       throw ErrorManager.createSignatureError(error.message);
     }
   }
